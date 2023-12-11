@@ -4,7 +4,7 @@
     <title>Eneco Assistent</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
@@ -14,20 +14,23 @@
             background-color: #005b9c; /* Eneco blue */
             color: white;
             text-align: center;
-            padding: 10px 0;
+            padding: 20px 0;
         }
         .container {
             width: 80%;
-            margin: auto;
+            margin: 20px auto;
             overflow: hidden;
         }
         .main-content {
             margin-top: 20px;
+            text-align: center; /* Centering content */
         }
         .chatbot {
             background-color: #fff;
             padding: 20px;
             margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Adding shadow for depth */
+            border-radius: 8px; /* Rounded corners */
         }
         .footer {
             background-color: #005b9c;
@@ -39,18 +42,23 @@
             bottom: 0;
             width: 100%;
         }
+        img {
+            max-width: 100%; /* Responsive image */
+            height: auto;
+            border-radius: 8px; /* Rounded corners for the image */
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Tide Dial Installatie Assistent</h1>
+        <h1>Installatie Assistent</h1>
     </div>
     <div class="container">
         <div class="main-content">
-Dit is een prototype. 
-Druk op de knop rechtsonderin het beeld om de Assistent te starten.
+            <img src="https://cm4-production-assets.s3.amazonaws.com/1700857243794-1.jpg" alt="Afbeelding">
+            <p>Dit is een prototype. Druk op de oranje knop rechtsonderin het beeld om de Installatie Assistent te starten.</p>
         </div>
-        <script type="text/javascript">
+   <script type="text/javascript">
   (function(d, t) {
       var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
       v.onload = function() {
@@ -65,8 +73,12 @@ Druk op de knop rechtsonderin het beeld om de Assistent te starten.
 </script>
     </div>
     <div class="footer">
-        <p>Powered by Eneco</p>
+        <p>Powered by Universal Electronics.</p>
     </div>
 </body>
 </html>
+
+
+
+
 
