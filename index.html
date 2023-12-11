@@ -1,25 +1,56 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <!--
-      Get jQuery via CDN (https://jquery.com/)
-      jQuery is a js framework that gives us some easy to use
-      functions for interacting with webpages and APIs
-    -->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-
-    <!-- Load our files -->
-    <script type="text/javascript" src="index.js"></script>
-    <link rel="stylesheet" type="text/css" href="index.css">
-  </head>
-
-  <body>
-<p><strong><span style="font-size:24px">Tide Dial Installatie Assistent</span></strong></p>
-
-<p><span style="font-size:18px">Dit is een prototype.&nbsp;</span></p>
-
-<p><span style="font-size:18px">Druk op de knop rechtsonderin het beeld om de Assistent te starten.</span></p>
-    
-    <script type="text/javascript">
+<head>
+    <title>Eneco Assistent</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .header {
+            background-color: #005b9c; /* Eneco blue */
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        .main-content {
+            margin-top: 20px;
+        }
+        .chatbot {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .footer {
+            background-color: #005b9c;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Tide Dial Installatie Assistent</h1>
+    </div>
+    <div class="container">
+        <div class="main-content">
+Dit is een prototype. 
+Druk op de knop rechtsonderin het beeld om de Assistent te starten.
+        </div>
+        <script type="text/javascript">
   (function(d, t) {
       var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
       v.onload = function() {
@@ -32,5 +63,10 @@
       v.src = "https://cdn.voiceflow.com/widget/bundle.mjs"; v.type = "text/javascript"; s.parentNode.insertBefore(v, s);
   })(document, 'script');
 </script>
-  </body>
+    </div>
+    <div class="footer">
+        <p>Powered by Eneco</p>
+    </div>
+</body>
 </html>
+
