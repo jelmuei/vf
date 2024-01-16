@@ -1,0 +1,5 @@
+.vfrc-card--description {
+  word-break: keep-all;   /* Prevent words from breaking */
+  overflow-wrap: break-word;   /* Handle overflow in case of very long words */
+  line-height: 1.5;   /* Ensure proper spacing for wrapped lines */
+} */
