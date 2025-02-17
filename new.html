@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Eneco Assistent</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .header {
+            background-color: #005b9c; /* Eneco blue */
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        .main-content {
+            margin-top: 20px;
+            text-align: center; /* Centering content */
+        }
+        .chatbot {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Adding shadow for depth */
+            border-radius: 8px; /* Rounded corners */
+        }
+        .footer {
+            background-color: #005b9c;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+        }
+        img {
+            max-width: 100%; /* Responsive image */
+            height: auto;
+            border-radius: 8px; /* Rounded corners for the image */
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Installatie Assistent</h1>
+    </div>
+    <div class="container">
+        <div class="main-content">
+            <img src="https://eneco.assistent.site/eneco_tide_dial_small.jpg" alt="Tide Dial">
+            <p>Welkom bij de installatie assistent voor de slimme thermostaat. Druk op de oranje knop rechtsonderin om te starten.👇 </p>
+        </div>
+        
+        <script type="text/javascript">
+          (function(d, t) {
+              var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+              v.onload = function() {
+                window.voiceflow.chat.load({
+                  verify: { projectID: '6554e742b1cadb000771381b' },
+                  url: 'https://general-runtime.voiceflow.com',
+                  versionID: 'production'
+                });
+              }
+              v.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs"; 
+              v.type = "text/javascript"; 
+              s.parentNode.insertBefore(v, s);
+          })(document, 'script');
+        </script>
+    </div>
+    <div class="footer">
+        <p>Powered by <a href="https://uei.com">UEI</a> </p>
+    </div>
+</body>
+</html>
