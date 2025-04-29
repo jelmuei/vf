@@ -1,84 +1,114 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Eneco Assistent</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        .header {
-            background-color: #005b9c; /* Eneco blue */
-            color: white;
-            text-align: center;
-            padding: 20px 0;
-        }
-        .container {
-            width: 80%;
-            margin: 20px auto;
-            overflow: hidden;
-        }
-        .main-content {
-            margin-top: 20px;
-            text-align: center; /* Centering content */
-        }
-        .chatbot {
-            background-color: #fff;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Adding shadow for depth */
-            border-radius: 8px; /* Rounded corners */
-        }
-        .footer {
-            background-color: #005b9c;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-        }
-        img {
-            max-width: 100%; /* Responsive image */
-            height: auto;
-            border-radius: 8px; /* Rounded corners for the image */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nevo Installation Assistant</title>
+  <style>
+    :root {
+      --brand-color: #1a1a1a;
+      --accent-color: #007AFF; /* Nevo Blue */
+      --text-color: #f0f0f0;
+      --bg-color: #121212;
+      --container-bg: #1e1e1e;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      color: var(--text-color);
+      background-color: var(--bg-color);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background-color: var(--brand-color);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center; /* Center logo */
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .logo {
+      height: 2rem;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    .widget-container {
+      width: 100%;
+      max-width: 600px;
+      height: 80vh;
+      background-color: var(--container-bg);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+    }
+    @media (max-width: 600px) {
+      .widget-container {
+        height: 60vh;
+      }
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.875rem;
+      color: var(--text-color);
+      opacity: 0.6;
+    }
+    a {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Installatie Assistent</h1>
-    </div>
-    <div class="container">
-        <div class="main-content">
-            <img src="https://eneco.assistent.site/eneco_tide_dial_small.jpg" alt="Tide Dial">
-            <p>Welkom bij de installatie assistent voor de slimme thermostaat. Druk op de oranje knop rechtsonderin om te starten.👇 </p>
-        </div>
-        
-        <script type="text/javascript">
-  (function(d, t) {
+  <header>
+    <img src="https://eneco.assistent.site/img/nevo.aiText.svg" alt="Nevo AI Logo" class="logo">
+  </header>
+  <main>
+    <div class="widget-container" id="voiceflow-chat-frame"></div>
+  </main>
+  <!-- Voiceflow Widget Embed -->
+  <script type="text/javascript">
+    (function(d, t) {
       var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
       v.onload = function() {
         window.voiceflow.chat.load({
           verify: { projectID: '67e54cc0d206bffbcd84919b' },
           url: 'https://general-runtime.voiceflow.com',
-          versionID: 'production',
+          versionID: 'development',
           voice: {
-            url: "https://runtime-api.voiceflow.com"
+            url: 'https://runtime-api.voiceflow.com'
+          },
+          render: {
+            mode: 'embedded',
+            target: document.getElementById('voiceflow-chat-frame')
+          },
+          autostart: true,
+          allowDangerousHTML: false,
+          style: {
+            primaryColor: 'var(--accent-color)',
+            backgroundColor: 'var(--container-bg)',
+            textColor: 'var(--text-color)'
           }
         });
-      }
-      v.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs"; v.type = "text/javascript"; s.parentNode.insertBefore(v, s);
-  })(document, 'script');
-</script>
-    </div>
-    <div class="footer">
-        <p>Powered by <a href="https://uei.com">UEI</a> </p>
-    </div>
+      };
+      v.src = 'https://cdn.voiceflow.com/widget-next/bundle.mjs';
+      v.type = 'text/javascript';
+      s.parentNode.insertBefore(v, s);
+    })(document, 'script');
+  </script>
+  <footer>© 2025 Nevo Installation Assistant</footer>
 </body>
 </html>
