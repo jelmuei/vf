@@ -10,7 +10,6 @@
       --accent-color: #007AFF; /* Nevo Blue */
       --text-color: #f0f0f0;
       --bg-color: #121212;
-      --container-bg: #1e1e1e;
     }
     * {
       box-sizing: border-box;
@@ -30,7 +29,7 @@
       padding: 1rem;
       display: flex;
       align-items: center;
-      justify-content: center; /* Center logo */
+      justify-content: center;
       position: sticky;
       top: 0;
       z-index: 1000;
@@ -38,37 +37,13 @@
     .logo {
       height: 2rem;
     }
-    main {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem;
-    }
-    .widget-container {
-      width: 100%;
-      max-width: 600px;
-      height: 80vh;
-      background-color: var(--container-bg);
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-      overflow: hidden;
-    }
-    @media (max-width: 600px) {
-      .widget-container {
-        height: 60vh;
-      }
-    }
     footer {
       text-align: center;
       padding: 1rem;
       font-size: 0.875rem;
       color: var(--text-color);
       opacity: 0.6;
-    }
-    a {
-      color: var(--accent-color);
-      text-decoration: none;
+      margin-top: auto;
     }
   </style>
 </head>
@@ -76,10 +51,8 @@
   <header>
     <img src="https://eneco.assistent.site/img/nevo.aiText.svg" alt="Nevo AI Logo" class="logo">
   </header>
-  <main>
-    <div class="widget-container" id="voiceflow-chat-frame"></div>
-  </main>
-  <!-- Voiceflow Widget Embed -->
+
+  <!-- Voiceflow Widget Embed: default bubble in corner, full-screen on open -->
   <script type="text/javascript">
     (function(d, t) {
       var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
@@ -87,20 +60,9 @@
         window.voiceflow.chat.load({
           verify: { projectID: '67e54cc0d206bffbcd84919b' },
           url: 'https://general-runtime.voiceflow.com',
-          versionID: 'development',
+          versionID: 'production',
           voice: {
             url: 'https://runtime-api.voiceflow.com'
-          },
-          render: {
-            mode: 'embedded',
-            target: document.getElementById('voiceflow-chat-frame')
-          },
-          autostart: true,
-          allowDangerousHTML: false,
-          style: {
-            primaryColor: 'var(--accent-color)',
-            backgroundColor: 'var(--container-bg)',
-            textColor: 'var(--text-color)'
           }
         });
       };
@@ -109,6 +71,7 @@
       s.parentNode.insertBefore(v, s);
     })(document, 'script');
   </script>
+
   <footer>© 2025 Nevo Installation Assistant</footer>
 </body>
 </html>
