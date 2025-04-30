@@ -47,7 +47,6 @@
     }
     .logo {
       height: 2rem;
-      /* force SVG to white for contrast */
       filter: brightness(0) invert(1);
     }
     main {
@@ -87,7 +86,8 @@
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       opacity: 0;
-      animation: fadeIn 0.6s ease-in-out 1s forwards;
+      /* fade-in then periodic heartbeat pulse */
+      animation: fadeIn 0.6s ease-in-out 1s forwards, heartbeatCycle 8s ease-in-out 9s infinite;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -102,12 +102,14 @@
     .start-button:focus {
       box-shadow: 0 0 0 3px rgba(62, 168, 221, 0.5);
     }
-    .start-button[type='button'] {
-      /* ensures correct button type */
-    }
     .btn-icon {
       width: 1.5rem;
       height: 1.5rem;
+    }
+    @keyframes heartbeatCycle {
+      0%, 8%, 100% { transform: translateY(0) scale(1); }
+      2%, 6% { transform: translateY(-5px) scale(1.05); }
+      4% { transform: translateY(0) scale(0.95); }
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-10px); }
@@ -119,7 +121,6 @@
       font-size: 0.875rem;
       color: var(--text-color);
       opacity: 0.6;
-      /* Optional: add <a rel="license"> if needed */
     }
   </style>
 </head>
