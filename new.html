@@ -124,7 +124,8 @@
     }
     footer {
       text-align: center;
-      padding: var(--gap-tight);
+      padding: var(--gap-tight) calc(var(--gap-tight));
+      padding-bottom: calc(var(--gap-tight) + env(safe-area-inset-bottom)); /* respect iOS home indicator */
       font-size: 0.875rem;
       color: var(--text-color);
       opacity: 0.6;
