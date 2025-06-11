@@ -9,8 +9,10 @@
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-  <!-- Mobile browser theme color -->
-  <meta name="theme-color" content="#F05A28">
+  <!-- PWA Theme and Status Bar Styles -->
+  <meta name="theme-color" content="#d21242">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>Eneco Installatie Assistent</title>
   <style>
@@ -40,26 +42,17 @@
     :root {
       /* Brand Palette */
       --brand-color:    #F05A28;
-      --gradient-start: #d21242; /* Eneco Red */
-      --gradient-end:   #EA714F; /* Eneco Orange */
-      /* Call-to-Action */
-      --cta-color:      #007250; /* Eneco Green */
-
-      /* Surface & Background */
+      --gradient-start: #d21242;
+      --gradient-end:   #EA714F;
+      --cta-color:      #007250;
       --bg-color:       #FFFFFF;
       --surface-color:  #FFF1EE;
-
-      /* Text */
       --text-color:     #333333;
-
-      /* Spacing */
       --gap-tight:      0.5rem;
       --gap-loose:      2rem;
-
-      /* Typography */
       --font-light: 'EtelkaLight', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --font-medium:'EtelkaMedium', var(--font-light);
-      --font-bold:  'EtelkaBold', var(--font-light);
+      --font-medium: 'EtelkaMedium', var(--font-light);
+      --font-bold:   'EtelkaBold', var(--font-light);
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -73,7 +66,6 @@
     }
 
     header {
-      /* Gradient banner extends into the notch area */
       background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
       padding: env(safe-area-inset-top) var(--gap-tight) var(--gap-tight);
       display: flex;
@@ -83,10 +75,7 @@
       top: 0;
       z-index: 1000;
     }
-    .logo {
-      height: 3rem;
-      filter: none;
-    }
+    .logo { height: 3rem; filter: none; }
 
     main {
       flex: 1;
@@ -138,23 +127,13 @@
       filter: brightness(1.1);
       outline: none;
     }
-    .start-button:focus {
-      box-shadow: 0 0 0 3px rgba(0,114,80,0.5);
-    }
-    .btn-icon {
-      width: 1.5rem;
-      height: 1.5rem;
-    }
+    .start-button:focus {box-shadow: 0 0 0 3px rgba(0,114,80,0.5);}
+    .btn-icon { width: 1.5rem; height: 1.5rem; }
 
     @keyframes heartbeatCycle {
-      0%, 8%, 100% { transform: translateY(0) scale(1); }
-      2%, 6%      { transform: translateY(-5px) scale(1.05); }
-      4%          { transform: translateY(0) scale(0.95); }
+      0%,8%,100%{transform:translateY(0) scale(1);}2%,6%{transform:translateY(-5px) scale(1.05);}4%{transform:translateY(0) scale(0.95);}
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeIn {from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
 
     footer {
       text-align: center;
@@ -168,26 +147,13 @@
     }
 
     /* Voiceflow widget overrides */
-    .voiceflow-chat .bubble--assistant {
-      background-color: var(--surface-color) !important;
-    }
-    .voiceflow-chat .bubble--user {
-      background-color: #FFFFFF !important;
-    }
-    .voiceflow-chat .button-pill {
-      background-color: var(--surface-color) !important;
-      color: var(--brand-color) !important;
-    }
-    /* Voiceflow widget typography */
-    .voiceflow-chat,
-    .voiceflow-chat * {
-      font-family: var(--font-light) !important;
-    }
+    .voiceflow-chat .bubble--assistant { background-color: var(--surface-color) !important; }
+    .voiceflow-chat .bubble--user { background-color: #FFFFFF !important; }
+    .voiceflow-chat .button-pill { background-color: var(--surface-color) !important; color: var(--brand-color) !important; }
   </style>
 </head>
 <body>
   <header>
-    <!-- Updated Eneco logo -->
     <img src="https://eneco.assistent.site/img/eneco_logo.png" alt="Eneco Logo" class="logo">
   </header>
   <main>
@@ -215,11 +181,11 @@
       });
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/service-worker.js')
-        .then(reg => console.log('SW registered', reg))
-        .catch(err => console.warn('SW registration failed', err));
+          .then(reg => console.log('SW registered', reg))
+          .catch(err => console.warn('SW registration failed', err));
       }
     });
   </script>
-  <footer>© 2025 UEI.</footer>
+  <footer>© 2025 UEI</footer>
 </body>
 </html>
