@@ -51,7 +51,6 @@
 
       /* Text */
       --text-color:     #333333;
-      --text-strong:    #F05A28;
 
       /* Spacing */
       --gap-tight:      0.5rem;
@@ -74,9 +73,9 @@
     }
 
     header {
-      /* Gradient banner */
+      /* Gradient banner extends into the notch area */
       background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
-      padding: var(--gap-tight);
+      padding: env(safe-area-inset-top) var(--gap-tight) var(--gap-tight);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -85,7 +84,6 @@
       z-index: 1000;
     }
     .logo {
-      /* Increased logo size for better visibility */
       height: 3rem;
       filter: none;
     }
@@ -217,6 +215,6 @@
       }
     });
   </script>
-  <footer>© 2025 UEI</footer>
+  <footer>© 2025 Universal Electronics Inc.</footer>
 </body>
 </html>
