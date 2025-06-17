@@ -48,7 +48,7 @@
     .subtitle { margin: 0; font-family: var(--font-medium); font-size: 1rem; color: var(--text-color); opacity: 0.8; }
 
     /* Adjusted device image styling for mobile */
-    .device-image { max-width: 80%; max-height: 200px; width: auto; height: auto; margin-bottom: var(--gap-tight); }
+    .device-image { max-width: 80%; max-height: 200px; width: auto; height: auto; margin: var(--gap-tight) 0; }
 
     .start-button { margin-top: var(--gap-loose); background-color: var(--cta-color); color: #FFFFFF; padding: 0.75rem 1.5rem; font-size: 1rem; font-family: var(--font-medium); border: none; border-radius: 9999px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; animation: fadeIn 0.6s ease-in-out 1s forwards, heartbeatCycle 8s ease-in-out 9s infinite; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: transform 0.2s ease, filter 0.2s ease; }
     .start-button:hover, .start-button:focus { transform: scale(1.05); filter: brightness(1.1); outline: none; }
@@ -69,8 +69,10 @@
     <img src="https://eneco.assistent.site/img/eneco_white.svg" alt="Eneco Logo" class="logo">
   </header>
   <main>
-    <img src="https://eneco.assistent.site/img/TIDE%20Touch%20Front_Eneco%201.png" alt="TIDE Touch Front" class="device-image">
+    <!-- Title above image -->
     <h1 class="main-title">Installatie assistent</h1>
+    <img src="https://eneco.assistent.site/img/TIDE%20Touch%20Front_Eneco%201.png" alt="TIDE Touch Front" class="device-image">
+    <!-- Subtitle below image -->
     <h2 class="subtitle">Slimme thermostaat</h2>
     <button class="start-button" id="startBtn" type="button" aria-label="Open installatie assistent">
       <img src="https://cm4-production-assets.s3.amazonaws.com/1700864793519-nevo1.png" alt="IoT Icon" class="btn-icon">
