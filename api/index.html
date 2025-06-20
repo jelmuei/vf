@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thermostat API Tester</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Smart Thermostat API Tester</h1>
+    <label for="envSelect">Environment:</label>
+    <select id="envSelect">
+      <option value="dev">Development</option>
+      <option value="staging">Staging</option>
+      <option value="prod">Production</option>
+    </select>
+  </header>
+
+  <section id="loginSection">
+    <h2>Login</h2>
+    <form id="loginForm">
+      <input name="tenantId" placeholder="Tenant ID" required />
+      <input name="clientId" placeholder="Client ID" required />
+      <input name="secret" placeholder="Secret" required />
+      <input name="userName" placeholder="Username" required />
+      <input name="password" type="password" placeholder="Password" required />
+      <input name="masterId" placeholder="Master ID" required />
+      <input name="userId" placeholder="User ID" required />
+      <input name="ownerId" placeholder="Owner ID" required />
+      <button type="submit">Get Access Token</button>
+    </form>
+  </section>
+
+  <section id="tokenSection" class="hidden">
+    <h2>Access Token</h2>
+    <pre id="tokenDisplay"></pre>
+    <button id="refreshTokenBtn">Refresh Token</button>
+    <button id="clearSessionBtn">Clear Session</button>
+  </section>
+
+  <section id="devicesSection" class="hidden">
+    <h2>Devices</h2>
+    <button id="fetchDevicesBtn">Fetch Devices</button>
+    <div id="devicesContainer" class="grid"></div>
+  </section>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <div id="widgetContent"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
