@@ -19,8 +19,7 @@
 
   <div class="section" id="auth-section">
     <h2>Authorize</h2>
-    <label>Client ID<input type="text" id="clientId"></label>
-    <label>Client Secret<input type="password" id="clientSecret"></label>
+    <label>Tenant ID<input type="text" id="tenantIdAuth"></label>
     <label>Username<input type="text" id="username"></label>
     <label>Password<input type="password" id="password"></label>
     <button id="btnAuthorize">Authorize and Save</button>
@@ -29,7 +28,7 @@
 
   <div class="section" id="config-section" style="display:none;">
     <h2>Configuration</h2>
-    <label>Tenant ID<input type="text" id="tenantId"></label>
+    <label>Tenant ID<input type="text" id="tenantId" readonly></label>
     <label>User ID<input type="text" id="userId"></label>
     <label>Master ID<input type="text" id="masterId"></label>
     <button id="btnLoadDevices">Load Devices</button>
@@ -40,6 +39,7 @@
     <h2>Device Status</h2>
     <div id="controllerData" class="device status"></div>
     <div id="bridgeData" class="device status"></div>
+    <button id="btnRefreshToken">Refresh Token</button>
   </div>
 
   <script>
@@ -53,39 +53,50 @@
       return match ? decodeURIComponent(match[2]) : '';
     }
 
-    // On load, check for saved token
+    async function obtainToken(tenantId, username, password) {
+      const resp = await fetch(`${apiBase}/api/tenants/${tenantId}/users/accounts/accesstoken`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userName: username, password })
+      });
+      if (!resp.ok) throw new Error('Auth failed');
+      return resp.json();
+    }
+
+    async function refreshToken(tenantId, refreshToken) {
+      const resp = await fetch(`${apiBase}/api/tenants/${tenantId}/users/accounts/refreshtoken`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken })
+      });
+      if (!resp.ok) throw new Error('Refresh failed');
+      return resp.json();
+    }
+
     window.onload = () => {
       const token = getCookie('accessToken');
-      if (token) {
+      const tenant = getCookie('tenantId');
+      if (token && tenant) {
         document.getElementById('auth-section').style.display = 'none';
         document.getElementById('config-section').style.display = 'block';
+        document.getElementById('tenantId').value = tenant;
         document.getElementById('authStatus').innerText = 'Authorized';
       }
     };
 
     document.getElementById('btnAuthorize').onclick = async () => {
-      const clientId = document.getElementById('clientId').value;
-      const clientSecret = document.getElementById('clientSecret').value;
+      const tenantId = document.getElementById('tenantIdAuth').value;
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       try {
-        const resp = await fetch(`${apiBase}/connect/token`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            client_id: clientId,
-            client_secret: clientSecret,
-            username: username,
-            password: password,
-            grant_type: 'password'
-          })
-        });
-        if (!resp.ok) throw new Error('Auth failed');
-        const data = await resp.json();
-        saveCookie('accessToken', data.access_token);
+        const data = await obtainToken(tenantId, username, password);
+        saveCookie('accessToken', data.accessToken);
+        saveCookie('refreshToken', data.refreshToken);
+        saveCookie('tenantId', tenantId);
         document.getElementById('authStatus').innerText = 'Authorized';
         document.getElementById('auth-section').style.display = 'none';
         document.getElementById('config-section').style.display = 'block';
+        document.getElementById('tenantId').value = tenantId;
       } catch (e) {
         document.getElementById('authStatus').innerText = 'Authorization error';
       }
@@ -96,11 +107,19 @@
       const userId = document.getElementById('userId').value;
       const masterId = document.getElementById('masterId').value;
       const token = getCookie('accessToken');
-      const url = `${apiBase}/api/tenants/${tenantId}/owners/${userId}/hosts/${masterId}/devices`;
       try {
-        const resp = await fetch(url, {
+        let resp = await fetch(`${apiBase}/api/tenants/${tenantId}/owners/${userId}/hosts/${masterId}/devices`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (resp.status === 401) {
+          const rt = getCookie('refreshToken');
+          const newData = await refreshToken(tenantId, rt);
+          saveCookie('accessToken', newData.accessToken);
+          saveCookie('refreshToken', newData.refreshToken);
+          resp = await fetch(`${apiBase}/api/tenants/${tenantId}/owners/${userId}/hosts/${masterId}/devices`, {
+            headers: { 'Authorization': `Bearer ${newData.accessToken}` }
+          });
+        }
         if (!resp.ok) throw new Error('Failed to load devices');
         const devices = await resp.json();
         const controller = devices.find(d => d.type === 'Controller');
@@ -113,26 +132,38 @@
       }
     };
 
+    document.getElementById('btnRefreshToken').onclick = async () => {
+      const tenantId = getCookie('tenantId');
+      const rt = getCookie('refreshToken');
+      try {
+        const data = await refreshToken(tenantId, rt);
+        saveCookie('accessToken', data.accessToken);
+        saveCookie('refreshToken', data.refreshToken);
+        alert('Token refreshed');
+      } catch (e) {
+        alert('Refresh error');
+      }
+    };
+
     async function fetchResources(tenant, owner, master, deviceId, elementId) {
-      const token = getCookie('accessToken');
-      const url = `${apiBase}/api/tenants/${tenant}/owners/${owner}/hosts/${master}/devices/${deviceId}/resources`;
-      const resp = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+      let token = getCookie('accessToken');
+      let resp = await fetch(`${apiBase}/api/tenants/${tenant}/owners/${owner}/hosts/${master}/devices/${deviceId}/resources`, { headers: { 'Authorization': `Bearer ${token}` } });
+      if (resp.status === 401) {
+        const rt = getCookie('refreshToken');
+        const newData = await refreshToken(tenant, rt);
+        saveCookie('accessToken', newData.accessToken);
+        saveCookie('refreshToken', newData.refreshToken);
+        token = newData.accessToken;
+        resp = await fetch(`${apiBase}/api/tenants/${tenant}/owners/${owner}/hosts/${master}/devices/${deviceId}/resources`, { headers: { 'Authorization': `Bearer ${token}` } });
+      }
       const resources = await resp.json();
       const el = document.getElementById(elementId);
       el.innerHTML = `<strong>Device ${deviceId}</strong><br>`;
       resources.forEach(r => {
-        if (r.type === 'CurrentTemperature') {
-          el.innerHTML += `Ambient Temp: ${r.properties[0].value}°<br>`;
-        }
-        if (r.type === 'CurrentHumidity') {
-          el.innerHTML += `Humidity: ${r.properties[0].value}%<br>`;
-        }
-        if (r.type === 'HvacMode') {
-          el.innerHTML += `Mode: ${r.properties[0].value}<br>`;
-        }
-        if (r.type === 'TargetTemperatureRange') {
-          el.innerHTML += `Setpoint: Low ${r.properties.find(p=>p.name==='Low').value}°, High ${r.properties.find(p=>p.name==='High').value}°<br>`;
-        }
+        if (r.type === 'CurrentTemperature') el.innerHTML += `Ambient Temp: ${r.properties[0].value}°<br>`;
+        if (r.type === 'CurrentHumidity') el.innerHTML += `Humidity: ${r.properties[0].value}%<br>`;
+        if (r.type === 'HvacMode') el.innerHTML += `Mode: ${r.properties[0].value}<br>`;
+        if (r.type === 'TargetTemperatureRange') el.innerHTML += `Setpoint: Low ${r.properties.find(p=>p.name==='Low').value}°, High ${r.properties.find(p=>p.name==='High').value}°<br>`;
       });
     }
   </script>
