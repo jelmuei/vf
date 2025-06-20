@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Thermostat UI</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
+    h2 { border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+    label { display: block; margin-top: 10px; }
+    input, select, button { width: 100%; padding: 8px; margin-top: 5px; }
+    .section { margin-bottom: 20px; }
+    .status { padding: 10px; background: #f9f9f9; border: 1px solid #eee; }
+    .device { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Smart Thermostat Control</h1>
+
+  <div class="section" id="auth-section">
+    <h2>Authorize</h2>
+    <label>Client ID<input type="text" id="clientId"></label>
+    <label>Client Secret<input type="password" id="clientSecret"></label>
+    <label>Username<input type="text" id="username"></label>
+    <label>Password<input type="password" id="password"></label>
+    <button id="btnAuthorize">Authorize and Save</button>
+    <div id="authStatus" class="status"></div>
+  </div>
+
+  <div class="section" id="config-section" style="display:none;">
+    <h2>Configuration</h2>
+    <label>Tenant ID<input type="text" id="tenantId"></label>
+    <label>User ID<input type="text" id="userId"></label>
+    <label>Master ID<input type="text" id="masterId"></label>
+    <button id="btnLoadDevices">Load Devices</button>
+    <div id="configStatus" class="status"></div>
+  </div>
+
+  <div class="section" id="devices-section" style="display:none;">
+    <h2>Device Status</h2>
+    <div id="controllerData" class="device status"></div>
+    <div id="bridgeData" class="device status"></div>
+  </div>
+
+  <script>
+    const apiBase = 'https://stg-interop.quicksetcloud.com';
+
+    function saveCookie(name, value) {
+      document.cookie = `${name}=${encodeURIComponent(value)}; path=/`; 
+    }
+    function getCookie(name) {
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return match ? decodeURIComponent(match[2]) : '';
+    }
+
+    // On load, check for saved token
+    window.onload = () => {
+      const token = getCookie('accessToken');
+      if (token) {
+        document.getElementById('auth-section').style.display = 'none';
+        document.getElementById('config-section').style.display = 'block';
+        document.getElementById('authStatus').innerText = 'Authorized';
+      }
+    };
+
+    document.getElementById('btnAuthorize').onclick = async () => {
+      const clientId = document.getElementById('clientId').value;
+      const clientSecret = document.getElementById('clientSecret').value;
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      try {
+        const resp = await fetch(`${apiBase}/connect/token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            client_id: clientId,
+            client_secret: clientSecret,
+            username: username,
+            password: password,
+            grant_type: 'password'
+          })
+        });
+        if (!resp.ok) throw new Error('Auth failed');
+        const data = await resp.json();
+        saveCookie('accessToken', data.access_token);
+        document.getElementById('authStatus').innerText = 'Authorized';
+        document.getElementById('auth-section').style.display = 'none';
+        document.getElementById('config-section').style.display = 'block';
+      } catch (e) {
+        document.getElementById('authStatus').innerText = 'Authorization error';
+      }
+    };
+
+    document.getElementById('btnLoadDevices').onclick = async () => {
+      const tenantId = document.getElementById('tenantId').value;
+      const userId = document.getElementById('userId').value;
+      const masterId = document.getElementById('masterId').value;
+      const token = getCookie('accessToken');
+      const url = `${apiBase}/api/tenants/${tenantId}/owners/${userId}/hosts/${masterId}/devices`;
+      try {
+        const resp = await fetch(url, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!resp.ok) throw new Error('Failed to load devices');
+        const devices = await resp.json();
+        const controller = devices.find(d => d.type === 'Controller');
+        const bridge = devices.find(d => d.type === 'Thermostat');
+        document.getElementById('devices-section').style.display = 'block';
+        if (controller) fetchResources(tenantId, userId, masterId, controller.id, 'controllerData');
+        if (bridge) fetchResources(tenantId, userId, masterId, bridge.id, 'bridgeData');
+      } catch (e) {
+        document.getElementById('configStatus').innerText = 'Error loading devices';
+      }
+    };
+
+    async function fetchResources(tenant, owner, master, deviceId, elementId) {
+      const token = getCookie('accessToken');
+      const url = `${apiBase}/api/tenants/${tenant}/owners/${owner}/hosts/${master}/devices/${deviceId}/resources`;
+      const resp = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+      const resources = await resp.json();
+      const el = document.getElementById(elementId);
+      el.innerHTML = `<strong>Device ${deviceId}</strong><br>`;
+      resources.forEach(r => {
+        if (r.type === 'CurrentTemperature') {
+          el.innerHTML += `Ambient Temp: ${r.properties[0].value}°<br>`;
+        }
+        if (r.type === 'CurrentHumidity') {
+          el.innerHTML += `Humidity: ${r.properties[0].value}%<br>`;
+        }
+        if (r.type === 'HvacMode') {
+          el.innerHTML += `Mode: ${r.properties[0].value}<br>`;
+        }
+        if (r.type === 'TargetTemperatureRange') {
+          el.innerHTML += `Setpoint: Low ${r.properties.find(p=>p.name==='Low').value}°, High ${r.properties.find(p=>p.name==='High').value}°<br>`;
+        }
+      });
+    }
+  </script>
+</body>
+</html>
