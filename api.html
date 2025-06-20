@@ -55,8 +55,18 @@
       return match ? decodeURIComponent(match[2]) : '';
     }
 
+    async function safeFetch(url, options) {
+      try {
+        const resp = await fetch(url, { ...options, mode: 'cors' });
+        return resp;
+      } catch (err) {
+        throw new Error(`Network error: ${err.message}`);
+      }
+    }
+
     async function obtainToken(tenantId, clientId, clientSecret, username, password) {
-      const resp = await fetch(`${apiBase}/api/tenants/${tenantId}/users/accounts/accesstoken`, {
+      const url = `${apiBase}/api/tenants/${tenantId}/users/accounts/accesstoken`;
+      const resp = await safeFetch(url, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -73,7 +83,8 @@
     }
 
     async function refreshToken(tenantId, clientId, clientSecret, refreshToken) {
-      const resp = await fetch(`${apiBase}/api/tenants/${tenantId}/users/accounts/refreshtoken`, {
+      const url = `${apiBase}/api/tenants/${tenantId}/users/accounts/refreshtoken`;
+      const resp = await safeFetch(url, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -122,29 +133,29 @@
       }
     };
 
+    async function fetchDevices(tenantId, userId, masterId) {
+      const url = `${apiBase}/api/tenants/${tenantId}/owners/${userId}/hosts/${masterId}/devices`;
+      let token = getCookie('accessToken');
+      let resp = await safeFetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+      if (resp.status === 401) {
+        const clientId = getCookie('clientId');
+        const clientSecret = getCookie('clientSecret');
+        const rt = getCookie('refreshToken');
+        const newTokens = await refreshToken(tenantId, clientId, clientSecret, rt);
+        saveCookie('accessToken', newTokens.accessToken);
+        saveCookie('refreshToken', newTokens.refreshToken);
+        resp = await safeFetch(url, { headers: { 'Authorization': `Bearer ${newTokens.accessToken}` } });
+      }
+      if (!resp.ok) throw new Error(`Failed to load devices: ${resp.status}`);
+      return resp.json();
+    }
+
     document.getElementById('btnLoadDevices').onclick = async () => {
       const tenantId = document.getElementById('tenantId').value;
       const userId = document.getElementById('userId').value;
       const masterId = document.getElementById('masterId').value;
-      let token = getCookie('accessToken');
-      const clientId = getCookie('clientId');
-      const clientSecret = getCookie('clientSecret');
       try {
-        let resp = await fetch(`${apiBase}/api/tenants/${tenantId}/owners/${userId}/hosts/${masterId}/devices`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (resp.status === 401) {
-          const rt = getCookie('refreshToken');
-          const newTokens = await refreshToken(tenantId, clientId, clientSecret, rt);
-          saveCookie('accessToken', newTokens.accessToken);
-          saveCookie('refreshToken', newTokens.refreshToken);
-          token = newTokens.accessToken;
-          resp = await fetch(`${apiBase}/api/tenants/${tenantId}/owners/${userId}/hosts/${masterId}/devices`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-        }
-        if (!resp.ok) throw new Error(`Failed to load devices: ${resp.status}`);
-        const devices = await resp.json();
+        const devices = await fetchDevices(tenantId, userId, masterId);
         document.getElementById('devices-section').style.display = 'block';
         const controller = devices.find(d => d.type === 'Controller');
         const bridge = devices.find(d => d.type === 'Thermostat');
@@ -171,23 +182,19 @@
     };
 
     async function fetchResources(tenant, owner, master, deviceId, elementId) {
+      const url = `${apiBase}/api/tenants/${tenant}/owners/${owner}/hosts/${master}/devices/${deviceId}/resources`;
       let token = getCookie('accessToken');
-      let resp = await fetch(`${apiBase}/api/tenants/${tenant}/owners/${owner}/hosts/${master}/devices/${deviceId}/resources`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      let resp = await safeFetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
       if (resp.status === 401) {
-        const tenantId = getCookie('tenantId');
         const clientId = getCookie('clientId');
         const clientSecret = getCookie('clientSecret');
         const rt = getCookie('refreshToken');
-        const newTokens = await refreshToken(tenantId, clientId, clientSecret, rt);
+        const newTokens = await refreshToken(tenant, clientId, clientSecret, rt);
         saveCookie('accessToken', newTokens.accessToken);
         saveCookie('refreshToken', newTokens.refreshToken);
-        token = newTokens.accessToken;
-        resp = await fetch(`${apiBase}/api/tenants/${tenant}/owners/${owner}/hosts/${master}/devices/${deviceId}/resources`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+        resp = await safeFetch(url, { headers: { 'Authorization': `Bearer ${newTokens.accessToken}` } });
       }
+      if (!resp.ok) throw new Error(`Failed to fetch resources: ${resp.status}`);
       const resources = await resp.json();
       const el = document.getElementById(elementId);
       el.innerHTML = `<strong>Device ${deviceId}</strong><br>`;
