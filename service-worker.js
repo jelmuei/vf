@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nevo-install-assistant-v1';
+const CACHE_NAME = 'nevo-install-assistant-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -6,7 +6,6 @@ const ASSETS_TO_CACHE = [
   '/favicon-32x32.png',
   '/apple-touch-icon.png',
   '/site.webmanifest',
-  // Add any other assets you want cached, e.g. CSS/fonts/img
 ];
 
 // Install: precache assets
